@@ -19,10 +19,10 @@ SCREEN 12
 COLOR 12
 sclear 640, 480, 21000, .1, 1, 2, 13
 man: LOCATE 1, 20
-PRINT "Basic Piano"
+PRINT "Sound Creator"
 COLOR 11
 LOCATE 2, 20
-PRINT "-----------"
+PRINT "-------------"
 COLOR 10
 LOCATE 4, 50
 PRINT "- by Subhajit sahu"
@@ -168,7 +168,7 @@ NEXT
 GOTO mn
 cl: CLOSE #1
 sclear 640, 480, 21000, 0, 1, 2, 3
-PRINT "Thank You for using BASIC PIANO"
+PRINT "Thank You for using Sound Creator"
 k$ = INPUT$(1)
 SYSTEM
 
