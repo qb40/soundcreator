@@ -50,26 +50,13 @@ DECLARE SUB s.zinge ()
 DECLARE SUB s.zingf ()
 DECLARE SUB s.play ()
 DECLARE SUB s.assgn (k$)
-DECLARE SUB s.uassgn (a%)
-
-DECLARE SUB sd.start (k$)
-DECLARE SUB sd.stop (n%)
-DECLARE SUB sd.play (n%)
-DECLARE SUB sd.do ()
+DECLARE SUB s.uassgn ()
 DECLARE SUB s.playall (k$)
-
-
-DECLARE SUB sd.strmd ()
+DECLARE SUB sd.play (k$)
 DECLARE SUB sd.stpmd ()
-DECLARE SUB sd.mode ()
-
-DECLARE SUB s.stopall ()
-
-
 DECLARE SUB box1 ()
-DECLARE SUB box2 (c%)
-DECLARE SUB box3 (c%)
-ON ERROR GOTO errs
+
+
 '============================Declaring Keys==================================
 CONST backspc = 8, enter = 13, htab = 9
 CONST left = 75, right = 77, up = 72, down = 80
@@ -77,9 +64,6 @@ CONST uplt = 71, uprt = 73, dnlt = 79, dnrt = 81
 CONST insert = 82, home = 73, pageup = 71, del = 83, endk = 81, pagedn = 79
 CONST kf1 = 59, kf2 = 60, kf3 = 61, kf4 = 62, kf5 = 63, kf6 = 64, kf7 = 65, kf8 = 66, kf9 = 67, kf10 = 68, kf11 = 133, kf12 = 134
 '-----------------------------Keys declared---------------------------------
-DIM SHARED active%(20)
-DIM SHARED process%(20), work%(20), sign%(20)
-DIM SHARED ps(27) AS LONG, fl$(27), fln%(27)
 
 xpos% = 165
 bar% = 1
@@ -142,7 +126,7 @@ PRINT "ษอออออออออออออออป"
 PRINT "บ SOUND CREATOR บ"
 PRINT "ศอออออออออออออออผ"
 status ""
-vstyle1 12, 0
+vstyle1 12, 1
 modes1 11, 0
 tools1 10
 flname1 9
@@ -173,21 +157,33 @@ status "File started."
 crt:
 DO UNTIL k$ = CHR$(27)
 k$ = INKEY$
+IF freq% < 37 THEN freq% = 21000
 
 IF k$ <> "" THEN
 
 SELECT CASE k$
 
+CASE CHR$(enter)
+wrtf level%
+SOUND level%, time#
+box1
+v.show
+
+CASE "\"
+wrtf 21000
+SOUND 21000, time#
+box1
+v.show
+
 CASE CHR$(0) + CHR$(up)
 level% = level% + rate%
 IF level% > 31999 THEN level% = 31999
+status "Level -> " + STR$(level%)
 
 CASE CHR$(0) + CHR$(down)
 level% = level% - rate%
 IF level% < 37 THEN level% = 37
-
-CASE CHR$(backspc)
-s.stopall
+status "Level -> " + STR$(level%)
 
 CASE CHR$(0) + CHR$(kf1)
 slct% = 0
@@ -222,12 +218,11 @@ IF rate% < 1 THEN rate% = 1
 
 CASE ELSE
 s.playall (k$)
+ 
 END SELECT
 END IF
 
-s.play
-sd.do
-v.show
+
 LOOP
 
 
@@ -403,517 +398,363 @@ SUB s.assgn (k$)
 SHARED active%
 kc% = ASC(UCASE$(k$)) - 64
 IF kc% <= 18 THEN
-s.uassgn (kc%)
-active%(kc%) = 1
+s.uassgn
+active% = kc%
 END IF
 END SUB
 
 SUB s.cvdn
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
+SHARED freq%, level%, time#, rate%
 
-a% = process%(5)
-wk% = work%(5)
-sn% = sign%(5)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = -2 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = -1 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = 1 * rate%
 IF (a% = 30 OR a% = 31) THEN sn% = 2 * rate%
 wk% = wk% + sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(5) = a%
-work%(5) = wk%
-sign%(5) = sn%
-ELSE
-s.uassgn 5
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.cvdnen
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(11)
-wk% = work%(11)
-sn% = sign%(11)
-
-IF (a% < 25) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 25
 IF (a% = 0 OR a% = 1) THEN sn% = -2 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = -1 * rate%
 freq% = level% + sn%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 level% = freq%
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(11) = a%
-work%(11) = wk%
-sign%(11) = sn%
-ELSE
-s.uassgn 11
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.cvup
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(2)
-wk% = work%(2)
-sn% = sign%(2)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 2 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = 1 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = -1 * rate%
 IF (a% = 30 OR a% = 31) THEN sn% = -2 * rate%
 wk% = wk% + sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(2) = a%
-work%(2) = wk%
-sign%(2) = sn%
-ELSE
-s.uassgn 2
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.cvupen
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(8)
-wk% = work%(8)
-sn% = sign%(8)
-
-IF (a% < 25) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 25
 IF (a% = 0 OR a% = 1) THEN sn% = 2 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = 1 * rate%
 freq% = level% + sn%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 level% = freq%
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(8) = a%
-work%(8) = wk%
-sign%(8) = sn%
-ELSE
-s.uassgn 8
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.hldn
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(6)
-wk% = work%(6)
-sn% = sign%(6)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = -1 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = -2 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = 2 * rate%
 IF (a% = 30 OR a% = 31) THEN sn% = 1 * rate%
 wk% = wk% + sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(6) = a%
-work%(6) = wk%
-sign%(6) = sn%
-ELSE
-s.uassgn 6
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.hldnen
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(12)
-wk% = work%(12)
-sn% = sign%(12)
-
-IF (a% < 25) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 25
 IF (a% = 0 OR a% = 1) THEN sn% = -1 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = -2 * rate%
 freq% = level% + sn%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 level% = freq%
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(12) = a%
-work%(12) = wk%
-sign%(12) = sn%
-ELSE
-s.uassgn 12
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.hlup
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(3)
-wk% = work%(3)
-sn% = sign%(3)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = 2 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = -2 * rate%
 IF (a% = 30 OR a% = 31) THEN sn% = -1 * rate%
 wk% = wk% + sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(3) = a%
-work%(3) = wk%
-sign%(3) = sn%
-ELSE
-s.uassgn 3
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.hlupen
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(9)
-wk% = work%(9)
-sn% = sign%(9)
-
-IF (a% < 25) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 25
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 IF (a% = 20 OR a% = 21) THEN sn% = 2 * rate%
 freq% = level% + sn%
 level% = freq%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(9) = a%
-work%(9) = wk%
-sign%(9) = sn%
-ELSE
-s.uassgn 9
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.pkdn
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(4)
-wk% = work%(4)
-sn% = sign%(4)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = -1 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = 1 * rate%
 wk% = wk% + sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(4) = a%
-work%(4) = wk%
-sign%(4) = sn%
-ELSE
-s.uassgn 4
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.pkdnen
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(10)
-wk% = work%(10)
-sn% = sign%(10)
-
-IF (a% < 25) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 25
 IF (a% = 0 OR a% = 1) THEN sn% = -1 * rate%
 freq% = level% + sn%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 level% = freq%
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(10) = a%
-work%(10) = wk%
-sign%(10) = sn%
-ELSE
-s.uassgn 10
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.pkup
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(1)
-wk% = work%(1)
-sn% = sign%(1)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = -1 * rate%
 wk% = wk% + sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(1) = a%
-work%(1) = wk%
-sign%(1) = sn%
-ELSE
-s.uassgn 1
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.pkupen
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(7)
-wk% = work%(7)
-sn% = sign%(7)
-
-IF (a% < 25) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 25
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 freq% = level% + sn%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 level% = freq%
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(7) = a%
-work%(7) = wk%
-sign%(7) = sn%
-ELSE
-s.uassgn 7
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.play
-SHARED active%()
-IF (active%(1) = 1) THEN s.pkup
-IF (active%(2) = 1) THEN s.cvup
-IF (active%(3) = 1) THEN s.hlup
-IF (active%(4) = 1) THEN s.pkdn
-IF (active%(5) = 1) THEN s.cvdn
-IF (active%(6) = 1) THEN s.hldn
-IF (active%(7) = 1) THEN s.pkupen
-IF (active%(8) = 1) THEN s.cvupen
-IF (active%(9) = 1) THEN s.hlupen
-IF (active%(10) = 1) THEN s.pkdnen
-IF (active%(11) = 1) THEN s.cvdnen
-IF (active%(12) = 1) THEN s.hldnen
-IF (active%(13) = 1) THEN s.zinga
-IF (active%(14) = 1) THEN s.zingb
-IF (active%(15) = 1) THEN s.zingc
-IF (active%(16) = 1) THEN s.zingd
-IF (active%(17) = 1) THEN s.zinge
-IF (active%(18) = 1) THEN s.zingf
+SHARED active%
+IF (active% = 1) THEN s.pkup
+IF (active% = 2) THEN s.cvup
+IF (active% = 3) THEN s.hlup
+IF (active% = 4) THEN s.pkdn
+IF (active% = 5) THEN s.cvdn
+IF (active% = 6) THEN s.hldn
+IF (active% = 7) THEN s.pkupen
+IF (active% = 8) THEN s.cvupen
+IF (active% = 9) THEN s.hlupen
+IF (active% = 10) THEN s.pkdnen
+IF (active% = 11) THEN s.cvdnen
+IF (active% = 12) THEN s.hldnen
+IF (active% = 13) THEN s.zinga
+IF (active% = 14) THEN s.zingb
+IF (active% = 15) THEN s.zingc
+IF (active% = 16) THEN s.zingd
+IF (active% = 17) THEN s.zinge
+IF (active% = 18) THEN s.zingf
 END SUB
 
 SUB s.playall (k$)
 SHARED slct%
-IF slct% = 0 THEN s.assgn (k$) ELSE sd.start (k$)
+IF slct% = 0 THEN
+s.assgn k$
+s.play
+ELSE
+sd.play k$
+END IF
 END SUB
 
-SUB s.stopall
-FOR i% = 1 TO 18
-s.uassgn (i%)
-NEXT
-FOR i% = 1 TO 26
-sd.stop (i%)
-NEXT
-END SUB
-
-SUB s.uassgn (a%)
-SHARED active%(), process%(), work%(), sign%()
-active%(a%) = 0
-process%(a%) = 0
-work%(a%) = 0
-sign%(a%) = 0
+SUB s.uassgn
+SHARED active%, process%, work%, sign%
+active% = 0
+process% = 0
+work% = 0
+sign% = 0
 END SUB
 
 SUB s.zinga
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(13)
-wk% = work%(13)
-sn% = sign%(13)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 sn% = sn% * -1
 wk% = sn% * 20
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(13) = a%
-work%(13) = wk%
-sign%(13) = sn%
-ELSE
-s.uassgn 13
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.zingb
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(14)
-wk% = work%(14)
-sn% = sign%(14)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 sn% = sn% * -1
 wk% = sn% * 5
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(14) = a%
-work%(14) = wk%
-sign%(14) = sn%
-ELSE
-s.uassgn 14
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.zingc
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(15)
-wk% = work%(15)
-sn% = sign%(15)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 20 * rate%
 IF (a% = 25 OR a% = 26) THEN sn% = 5 * rate%
 sn% = sn% * -1
 wk% = sn%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(15) = a%
-work%(15) = wk%
-sign%(15) = sn%
-ELSE
-s.uassgn 15
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.zingd
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(16)
-wk% = work%(16)
-sn% = sign%(16)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 sn% = sn% * -1
 wk% = sn% * a%
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(16) = a%
-work%(16) = wk%
-sign%(16) = sn%
-ELSE
-s.uassgn 16
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.zinge
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(17)
-wk% = work%(17)
-sn% = sign%(17)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 sn% = sn% * -1
 wk% = sn% * (50 - a%)
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(17) = a%
-work%(17) = wk%
-sign%(17) = sn%
-ELSE
-s.uassgn 17
-END IF
+box1
+v.show
+NEXT
+s.uassgn
 END SUB
 
 SUB s.zingf
-SHARED freq%, level%, time#, rate%, process%(), work%(), sign%()
-
-a% = process%(18)
-wk% = work%(18)
-sn% = sign%(18)
-
-IF (a% < 50) THEN
-
-a% = a% + 1
+SHARED freq%, level%, time#, rate%
+FOR a% = 1 TO 50
 IF (a% = 0 OR a% = 1) THEN sn% = 1 * rate%
 sn% = sn% * -1
 IF (a% < 25) THEN wk% = sn% * a% ELSE wk% = sn% * (50 - a%)
 freq% = level% + wk%
+IF freq% < 37 THEN freq% = 37
+IF freq% > 21000 THEN freq% = 21000
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-
-process%(18) = a%
-work%(18) = wk%
-sign%(18) = sn%
-ELSE
-s.uassgn 18
-END IF
-END SUB
-
-SUB sd.do
-SHARED fl$()
-FOR i% = 1 TO 26
-IF (fl$(i%) <> "") THEN sd.play (i%)
+box1
+v.show
 NEXT
+s.uassgn
 END SUB
 
 SUB sd.mode
@@ -927,44 +768,41 @@ vl1 = vl - 16384
 ftime# = 18.2 / vl1
 ELSE
 freq% = vl
-SOUND freq%, ftime#
+IF freq% < 37 THEN freq% = 37
+IF freq% > 37 AND freq% < 32767 THEN SOUND freq%, ftime#
+box1
+v.show
 END IF
 fmode = fmode + 2
 IF fmode > LOF(6) THEN sd.stpmd
 END IF
 END SUB
 
-SUB sd.play (n%)
-SHARED level%, freq%, fln%(), ps() AS LONG
-zz = fln%(n%)
-p = ps(n%)
+SUB sd.play (k$)
+SHARED level%, freq%, fln%, ps AS LONG, fl$
+vl = ASC(UCASE$(k$)) - 64
+IF vl <= 26 THEN
+fln% = FREEFILE
+fl$ = k$
+OPEN "B", #fln%, "Data\Part\" + k$ + ".lvl"
+ps = 1
+zz = fln%
+p = ps
+FOR p = 1 TO LOF(zz) STEP 2
 SEEK #zz, p
 k$ = INPUT$(2, #zz)
 freq% = level% + (ASC(LEFT$(k$, 1)) * 256 + ASC(RIGHT$(k$, 1)) - 32767)
+IF freq% < 37 THEN freq% = 37
 wrtf (freq%)
 IF (freq% > 37 AND freq% < 32767) THEN SOUND freq%, time#
-p = p + 2
-IF p > LOF(zz) THEN sd.stop (n%)
-ps(n%) = p
-END SUB
-
-SUB sd.start (k$)
-SHARED fln%(), ps() AS LONG, fl$()
-vl = ASC(UCASE$(k$)) - 64
-IF vl <= 26 THEN
-fln%(vl) = FREEFILE
-fl$(vl) = k$
-OPEN "B", #fln%(vl), "Data\Part\" + k$ + ".lvl"
-ps(vl) = 1
+box1
+v.show
+NEXT
 END IF
-END SUB
-
-SUB sd.stop (n%)
-SHARED fln%(), ps() AS LONG, fl$()
-CLOSE #fln%(n%)
-fl$(n%) = ""
-ps(n%) = 0
-fln%(n%) = 0
+CLOSE #zz
+fl$ = ""
+ps = 0
+fln% = 0
 END SUB
 
 SUB sd.stpmd
@@ -1105,8 +943,9 @@ bar% = 0
 END IF
 bar% = bar% + 1
 ht = (36 / 3273) * (freq% - 37)
+rad = (ht * (22 / 7)) / 180
 CIRCLE (400, 180), bar%, 0
-CIRCLE (400, 180), bar%, colour%, 0, ht
+CIRCLE (400, 180), bar%, colour%, 0, rad
 ef% = freq%
 END SUB
 
@@ -1259,6 +1098,7 @@ LOOP
 style% = o%
 click1
 v.chng
+vstyle1 12, o%
 END SUB
 
 SUB vstyle1 (c%, op%)
@@ -1293,7 +1133,7 @@ COLOR 11
 LOCATE op% + 5, 4
 SELECT CASE op%
 CASE 1
-PRINT "Lines -1";
+PRINT "Lines - 1";
 CASE 2
 PRINT "Lines - 2";
 CASE 3
@@ -1305,7 +1145,7 @@ PRINT "Bars - 1";
 CASE 6
 PRINT "Bars - 2";
 CASE 7
-PRINT "Columns -1";
+PRINT "Columns - 1";
 CASE 8
 PRINT "Columns - 2";
 CASE 9
