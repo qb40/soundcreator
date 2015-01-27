@@ -243,12 +243,13 @@ END IF
 
 
 LOOP
+CLOSE #5
+SYSTEM
 
 
 
 
-
-load:  
+load:    
 FOR fmode = 1 TO LOF(5) STEP 2
 SEEK #5, fmode
 k$ = INPUT$(2, #5)
@@ -1130,17 +1131,15 @@ END SUB
 
 SUB v.line2
 SHARED ef%, freq AS LONG, xpos%, colour%
-DIM area1(10000), area2(10000)
-GET (167, 50)-(367, 310), area1
-GET (368, 50)-(632, 310), area2
+DIM area(25000)
+GET (167, 50)-(632, 310), area
 LINE (165, 50)-(632, 310), 0, BF
-PUT (165, 50), area1
-PUT (366, 50), area2
+PUT (165, 50), area
 ht1 = 310 - (26 / 2100) * (ef% - 37)
 ht2 = 310 - (26 / 2100) * (freq - 37)
 LINE (630, ht1)-(632, ht2), colour%
 ef% = freq
-ERASE area1, area2
+ERASE area
 END SUB
 
 SUB v.rect
@@ -1234,16 +1233,14 @@ END SUB
 
 SUB v.spll2
 SHARED ef%, freq AS LONG, xpos%, colour%
-DIM area1(10000), area2(10000)
-GET (166, 50)-(367, 310), area1
-GET (368, 50)-(632, 310), area2
+DIM area(25000)
+GET (166, 50)-(632, 310), area
 LINE (165, 50)-(632, 310), 0, BF
-PUT (165, 50), area1
-PUT (366, 50), area2
+PUT (165, 50), area
 ht2 = (13 / 2100) * (freq - 37)
 LINE (632, 180 - ht2)-(632, 180 + ht2), colour%
 ef% = freq
-ERASE area1, area2
+ERASE area
 END SUB
 
 SUB vstyle
