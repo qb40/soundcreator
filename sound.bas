@@ -1,4 +1,3 @@
-DECLARE SUB sd.mode ()
 'ฝ ผ ป บ น ธ ท ถ ต ด ณ พ ฟ ภ ม ย ร ฤ ล ฦ ว ศ ษ ส ห ฬ อ ฮ ฯ ะ ั า ำ ิ ี ึ ื
 
 COMMON SHARED file$, fpos AS LONG, style%, mode$, mode%, colour%, freq AS LONG, rate%, level%, dblg%, time#, ef%, lmode%, xpos%, bar%, process%(), work%(), sign%(), fmode AS LONG, ftime#, slct%
@@ -56,6 +55,7 @@ DECLARE SUB s.uassgn ()
 DECLARE SUB s.playall (k$)
 DECLARE SUB sd.play (k$)
 DECLARE SUB sd.stpmd ()
+DECLARE SUB sd.mode ()
 DECLARE SUB box1 ()
 DECLARE SUB box2 (c%)
 DECLARE SUB box3 (c%)
@@ -74,12 +74,12 @@ mode% = 1
 xpos% = 165
 bar% = 1
 
-OPEN "B", #1, "Data\Part\Parts.log"
+OPEN "B", #1, "Parts.log"
 mslct% = VAL(INPUT$(LOF(1), #1))
 CLOSE #1
 
 '===================================Reading modes
-OPEN "B", #1, "Data\Mode\Mode.cab"
+OPEN "B", #1, "Mode.cab"
 lmode% = INT(LOF(1) / (12 + 16))
 CLOSE #1
 '===========================================
@@ -249,7 +249,7 @@ SYSTEM
 
 
 
-load:    
+load:   
 FOR fmode = 1 TO LOF(5) STEP 2
 SEEK #5, fmode
 k$ = INPUT$(2, #5)
@@ -418,7 +418,7 @@ PRINT "ศออออออออออออออออออผ";
 
 IF op% <> 0 THEN
 zz = FREEFILE
-OPEN "B", #zz, "Data\Mode\Mode.cab"
+OPEN "B", #zz, "Mode.cab"
 lv1 = op%
 lv2 = op% + 9
 IF (lv2 > lmode%) THEN
