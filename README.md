@@ -4,16 +4,16 @@
 Can be used to test your limits of hearing (getting more important
 these days) and to play wierd sounds. The controls are as follows:
 
-`A-Z` - Sound effect
-`8` - Increase frequency
-`2` - Decrease frequency
-`6` - Increase frequency change rate
-`4` - Decrease frequency change rate
-`+` - Increase time passage speed
-`-` - Decrease time passage speed
-`[` - Increase frequency spreading range
-`]` - Decrease frequency spreading range
-`\` - Mute Sound (on / off)
+`A-Z` - Sound effect<br/>
+`8` - Increase frequency<br/>
+`2` - Decrease frequency<br/>
+`6` - Increase frequency change rate<br/>
+`4` - Decrease frequency change rate<br/>
+`+` - Increase time passage speed<br/>
+`-` - Decrease time passage speed<br/>
+`[` - Increase frequency spreading range<br/>
+`]` - Decrease frequency spreading range<br/>
+`\` - Mute Sound (on / off)<br/>
 `Esc` - Save and exit
 
 
