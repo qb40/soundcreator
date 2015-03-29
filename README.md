@@ -68,5 +68,5 @@ Restart `sound.exe`. Select `2` to load sound file.
 
 <img src="/assets/img/13.png" width="70%"><br/>
 <img src="/assets/img/14.png" width="70%"><br/>
-Viewing / Playing sound file.
+Viewing / Playing sound file `sound`.
 <br/><br/>
